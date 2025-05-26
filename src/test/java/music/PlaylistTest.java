@@ -22,18 +22,37 @@ class PlaylistTest {
     public void testIfAddedSongIsTheSameObjectInList(){
         Playlist playList = new Playlist();
         Song songToAdd =new Song("Zenek","Oczy zielone",265);
+        Song secondSongToAdd =new Song("Zenek","Oczy zielone",265);
         playList.add(songToAdd);
-        assertTrue(songToAdd==playList.get(0));
+        playList.add(secondSongToAdd);
+        assertTrue(playList.get(1)==playList.get(0));
     }
-    //bardzo ważne zapamiętać
+    //spoko sprawa == nie równa się equals
     @Test
     public void testIfAddedSongHasTheSameFields(){
         Playlist playList = new Playlist();
         Song songToAdd =new Song("Zenek","Oczy zielone",265);
+        Song secondSongToAdd =new Song("Zenek","Oczy zielone",265);
         playList.add(songToAdd);
-        assertEquals(songToAdd,playList.get(0));
+        playList.add(secondSongToAdd);
+        assertEquals(playList.get(1),playList.get(0));
+
     }
 
 
+    @Test
+    void atSecond() {
+        Playlist playList = new Playlist();
 
+        assertNull(playList.atSecond(45));
+        Song songToAdd =new Song("Zenek","Oczy zielone",250);
+        playList.add(songToAdd);
+        assertNull(playList.atSecond(-6));
+        playList.add(songToAdd);
+        playList.add(songToAdd);
+        playList.add(songToAdd);
+        assertNotNull(playList.atSecond(727));
+
+
+    }
 }
