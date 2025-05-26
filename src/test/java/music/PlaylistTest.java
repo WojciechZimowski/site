@@ -52,6 +52,25 @@ class PlaylistTest {
         playList.add(songToAdd);
         playList.add(songToAdd);
         assertNotNull(playList.atSecond(727));
+        assertThrowsExactly(IndexOutOfBoundsException.class,() -> {
+            playList.atSecond(1024);
+        });
+
+
+    }
+    @Test
+    void atSecondOutOfBounds() {
+        Playlist playList = new Playlist();
+
+        assertNull(playList.atSecond(45));
+        Song songToAdd =new Song("Zenek","Oczy zielone",250);
+        playList.add(songToAdd);
+        playList.add(songToAdd);
+        playList.add(songToAdd);
+        playList.add(songToAdd);
+        assertThrowsExactly(IndexOutOfBoundsException.class,() -> {
+            playList.atSecond(1024);
+        });
 
 
     }
