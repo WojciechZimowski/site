@@ -75,6 +75,7 @@ public class ListenerAccount extends Account {
                 return resultSet.getInt("credits");
             }
             else throw new SQLException();
+
         }
 
         private static void addCredits(int id, int amount) throws SQLException {
@@ -92,6 +93,9 @@ public class ListenerAccount extends Account {
             statement.setInt(1, accountId);
             statement.setInt(2, songId);
             statement.executeUpdate();
+            //najpierw prepare statement połączenie z bd
+                    //insert
+            //exec
         }
 
         public static boolean hasSong(int accountId, int songId) throws SQLException {
