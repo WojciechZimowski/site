@@ -5,73 +5,65 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlaylistTest {
-
-
     @Test
-    public void testIfNewListIsEmpty(){
-        Playlist playList = new Playlist();
-        assertTrue(playList.isEmpty());
-    }
-    @Test
-    public void testIfAfterAddingFirstOneSizeIsOne(){
-        Playlist playList = new Playlist();
-        playList.add(new Song("Zenek","Oczy zielone",265));
-        assertEquals(1,playList.size());
-    }
-    @Test
-    public void testIfAddedSongIsTheSameObjectInList(){
-        Playlist playList = new Playlist();
-        Song songToAdd =new Song("Zenek","Oczy zielone",265);
-        Song secondSongToAdd =new Song("Zenek","Oczy zielone",265);
-        playList.add(songToAdd);
-        playList.add(secondSongToAdd);
-        assertTrue(playList.get(1)==playList.get(0));
-    }
-    //spoko sprawa == nie równa się equals
-    @Test
-    public void testIfAddedSongHasTheSameFields(){
-        Playlist playList = new Playlist();
-        Song songToAdd =new Song("Zenek","Oczy zielone",265);
-        Song secondSongToAdd =new Song("Zenek","Oczy zielone",265);
-        playList.add(songToAdd);
-        playList.add(secondSongToAdd);
-        assertEquals(playList.get(1),playList.get(0));
-
+    void testPlaylistIsEmptyWhenCreated() {
+        Playlist playlist = new Playlist();
+        assertTrue(playlist.isEmpty());
     }
 
-
     @Test
-    void atSecond() {
-        Playlist playList = new Playlist();
-
-        assertNull(playList.atSecond(45));
-        Song songToAdd =new Song("Zenek","Oczy zielone",250);
-        playList.add(songToAdd);
-        assertNull(playList.atSecond(-6));
-        playList.add(songToAdd);
-        playList.add(songToAdd);
-        playList.add(songToAdd);
-        assertNotNull(playList.atSecond(727));
-        assertThrowsExactly(IndexOutOfBoundsException.class,() -> {
-            playList.atSecond(1024);
-        });
-
-
+    void testPlaylistSizeAfterAddingOneSong() {
+        Playlist playlist = new Playlist();
+        playlist.add(new Song("Artist", "Title", 120));
+        assertEquals(1, playlist.size());
     }
+
     @Test
-    void atSecondOutOfBounds() {
-        Playlist playList = new Playlist();
+    void testPlaylistContainsExactSong() {
+        Playlist playlist = new Playlist();
+        Song song = new Song("Artist", "Title", 120);
+        playlist.add(song);
+        assertSame(song, playlist.get(0));
+    }
 
-        assertNull(playList.atSecond(45));
-        Song songToAdd =new Song("Zenek","Oczy zielone",250);
-        playList.add(songToAdd);
-        playList.add(songToAdd);
-        playList.add(songToAdd);
-        playList.add(songToAdd);
-        assertThrowsExactly(IndexOutOfBoundsException.class,() -> {
-            playList.atSecond(1024);
-        });
+    @Test
+    void testPlaylistContainsEqualSong() {
+        Playlist playlist = new Playlist();
+        Song song = new Song("Artist", "Title", 120);
+        playlist.add(song);
+        Song sameSong = new Song("Artist", "Title", 120);
+        assertEquals(sameSong, playlist.get(0));
+    }
 
+    @Test
+    void testAtSecondReturnsCorrectSong() {
+        Playlist playlist = new Playlist();
+        playlist.add(new Song("Artist1", "Song1", 100));
+        playlist.add(new Song("Artist2", "Song2", 200));
+        Song song = playlist.atSecond(150);
+        assertEquals("Song2", song.title());
+    }
 
+    @Test
+    void testAtSecondThrowsWhenTooFar() {
+        Playlist playlist = new Playlist();
+        playlist.add(new Song("Artist1", "Song1", 100));
+        assertThrows(IndexOutOfBoundsException.class, () -> playlist.atSecond(200));
+    }
+
+    @Test
+    void testAtSecondThrowsWithNegativeTime() {
+        Playlist playlist = new Playlist();
+        playlist.add(new Song("Artist1", "Song1", 100));
+        IndexOutOfBoundsException e = assertThrows(IndexOutOfBoundsException.class, () -> playlist.atSecond(-10));
+        assertEquals("Czas nie może być ujemny", e.getMessage());
+    }
+
+    @Test
+    void testAtSecondThrowsWithTooLargeTimeMessage() {
+        Playlist playlist = new Playlist();
+        playlist.add(new Song("Artist1", "Song1", 100));
+        IndexOutOfBoundsException e = assertThrows(IndexOutOfBoundsException.class, () -> playlist.atSecond(200));
+        assertEquals("Czas przekracza długość playlisty", e.getMessage());
     }
 }
