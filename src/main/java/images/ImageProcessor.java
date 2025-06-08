@@ -82,29 +82,34 @@ public class ImageProcessor {
     }
 
 //PD poprawić metode
-    public void increaseBrightnessThreadPool(int brightness) {
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        int height = image.getHeight();
-        int width = image.getWidth();
+public void increaseBrightnessThreadPool(int brightness) {
+    long startTime = System.currentTimeMillis(); // ⏱️ Start
 
-        for (int i = 0; i < height; i++) {
-            final int row = i;
-            executorService.submit(() -> {
-                for (int j = 0; j < width; j++) {
-                    Color c = new Color(image.getRGB(j, row));
-                    int r = Math.min(255, Math.max(0, c.getRed() + brightness));
-                    int g = Math.min(255, Math.max(0, c.getGreen() + brightness));
-                    int b = Math.min(255, Math.max(0, c.getBlue() + brightness));
-                    image.setRGB(j, row, new Color(r, g, b).getRGB());
-                }
-            });
-        }
+    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    int height = image.getHeight();
+    int width = image.getWidth();
 
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            System.out.println("Executor interrupted");
-        }
+    for (int i = 0; i < height; i++) {
+        final int row = i;
+        executorService.submit(() -> {
+            for (int j = 0; j < width; j++) {
+                Color c = new Color(image.getRGB(j, row));
+                int r = Math.min(255, Math.max(0, c.getRed() + brightness));
+                int g = Math.min(255, Math.max(0, c.getGreen() + brightness));
+                int b = Math.min(255, Math.max(0, c.getBlue() + brightness));
+                image.setRGB(j, row, new Color(r, g, b).getRGB());
+            }
+        });
     }
+
+    executorService.shutdown();
+    try {
+        executorService.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
+    } catch (InterruptedException e) {
+        System.out.println("Executor interrupted");
+    }
+
+    long endTime = System.currentTimeMillis(); // ⏱️ Stop
+    System.out.println("Czas wykonania procesu wielkowątkowego: " + (endTime - startTime) + " ms");
+}
 }
