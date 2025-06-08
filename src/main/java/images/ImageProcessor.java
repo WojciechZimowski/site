@@ -81,26 +81,30 @@ public class ImageProcessor {
         }
     }
 
-
-    public void increaseBrightnessThreadPool(int brightness){
-         ExecutorService excutorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//PD poprawić metode
+    public void increaseBrightnessThreadPool(int brightness) {
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         int height = image.getHeight();
         int width = image.getWidth();
-        for(int i=0; i<height; i++){
-            final int finalI = i;
-                excutorService.submit(()->{
-                        for(int j = 0; j < width; j++){
-                            Color c = new Color(image.getRGB(finalI, j));
-                            int r = Math.clamp(c.getRed() + brightness,0, 255);
-                            int g = Math.clamp(c.getGreen() + brightness, 0, 255);
-                            int b = Math.clamp(c.getBlue() + brightness, 0, 255);
-                            image.setRGB(finalI, j, new Color(r,g,b).getRGB());
-                        }
 
-                    }
-                );
+        for (int i = 0; i < height; i++) {
+            final int row = i;
+            executorService.submit(() -> {
+                for (int j = 0; j < width; j++) {
+                    Color c = new Color(image.getRGB(j, row));
+                    int r = Math.min(255, Math.max(0, c.getRed() + brightness));
+                    int g = Math.min(255, Math.max(0, c.getGreen() + brightness));
+                    int b = Math.min(255, Math.max(0, c.getBlue() + brightness));
+                    image.setRGB(j, row, new Color(r, g, b).getRGB());
+                }
+            });
         }
-        excutorService.shutdown();
 
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            System.out.println("Executor interrupted");
+        }
     }
 }
